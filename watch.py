@@ -18,8 +18,9 @@ import requests
 from boxd import Boxd
 
 DOMAIN = "jobs.centrality.lol"
-CHAIN = [("mcp-agent-vps", "BOXD_TOKEN"), ("jobs-standby", "BOXD_TOKEN_2"),
-         ("jobs-node-3", "BOXD_TOKEN_3"), ("jobs-node-4", "BOXD_TOKEN_4")]
+CHAIN = [("jobs-standby", "BOXD_TOKEN_2"),        # account 2: the main machine
+         ("jobs-node-3", "BOXD_TOKEN_3"), ("jobs-node-4", "BOXD_TOKEN_4"),
+         ("mcp-agent-vps", "BOXD_TOKEN")]          # account 1: last
 REMOTE = "/home/boxd/jobscraper"
 REVIVE_MINUTES = 7
 TAKEOVER_MINUTES = 40
