@@ -143,10 +143,15 @@ def takeover(name, var):
         return False
     b = client(var)
     try:
-        r = b.machines.exec(name, f"cd {REMOTE} && sudo systemd-run --uid=boxd --gid=boxd --working-directory={REMOTE} "
+        busy = b.machines.exec(name, "pgrep -fc '[f]ailover.py --takeover' || true")
+        if (getattr(busy, "stdout", "") or "").strip() not in ("", "0"):
+            log(f"a takeover is already running on {name}: waiting for it")
+            r = busy
+        else:
+            r = b.machines.exec(name, f"cd {REMOTE} && sudo systemd-run --uid=boxd --gid=boxd --working-directory={REMOTE} "
                                   f"--unit=takeover-$(date +%s) --collect -p StandardOutput=append:{REMOTE}/logs/takeover.log "
-                                  f"-p StandardError=append:{REMOTE}/logs/takeover.log {REMOTE}/.venv/bin/python failover.py --takeover")
-        log(f"takeover started on {name} (exit {r.exit_code})")
+                                      f"-p StandardError=append:{REMOTE}/logs/takeover.log {REMOTE}/.venv/bin/python failover.py --takeover")
+            log(f"takeover started on {name} (exit {r.exit_code})")
     finally:
         b.close()
     for _ in range(TAKEOVER_MINUTES):
