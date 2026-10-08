@@ -1,0 +1,24 @@
+name: watch
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+concurrency:
+  group: watch
+  cancel-in-progress: false
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -q boxd requests
+      - run: python watch.py
+        env:
+          BOXD_TOKEN: ${{ secrets.BOXD_TOKEN }}
+          BOXD_TOKEN_2: ${{ secrets.BOXD_TOKEN_2 }}
+          BOXD_TOKEN_3: ${{ secrets.BOXD_TOKEN_3 }}
+          BOXD_TOKEN_4: ${{ secrets.BOXD_TOKEN_4 }}
